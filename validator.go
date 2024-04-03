@@ -43,13 +43,13 @@ func Validate(typedStruct interface{}) ([][]string, bool) {
 				} else if rule == "email" {
 					validate(validateEmail, value, &errs)
 				} else if strings.HasPrefix(rule, "ext:") {
-                    // No need to further check if the data isn't a valid base64
-                    decodedData, err := base64.StdEncoding.DecodeString(value.Interface().(string))
+					// No need to further check if the data isn't a valid base64
+					decodedData, err := base64.StdEncoding.DecodeString(value.Interface().(string))
 
-                    if err != nil {
-                        errs = append(errs, "invalid base64 data")
-                        break
-                    }
+					if err != nil {
+						errs = append(errs, "invalid base64 data")
+						break
+					}
 
 					extensionString := strings.ToLower(string(rule[len("ext:"):]))
 					extensions := strings.Split(extensionString, ",")
@@ -78,7 +78,7 @@ func Validate(typedStruct interface{}) ([][]string, bool) {
 						tempErr = append(tempErr, errMsg)
 					}
 
-                    // in case there's no extension/valid extension supplied?
+					// in case there's no extension/valid extension supplied?
 					if !isValid && len(tempErr) > 0 {
 						errs = append(errs, tempErr...)
 					}
@@ -132,7 +132,7 @@ func validateFileFormat(value reflect.Value, format string) (string, bool) {
 		return "invalid file data", false
 	}
 
-    data := value.Interface().([]byte)
+	data := value.Interface().([]byte)
 
 	signature := FILE_SIGNATURES[format]
 

@@ -1,101 +1,100 @@
 package validator
 
 import (
-    "testing"
+	"testing"
 )
 
 func runTestCases(fn func(any) bool, cases []string, cond bool) (string, bool) {
-    for i := 0; i < len(cases); i++ {
-        if fn(cases[i]) != cond {
-            return cases[i], false
-        }
-    }
+	for i := 0; i < len(cases); i++ {
+		if fn(cases[i]) != cond {
+			return cases[i], false
+		}
+	}
 
-    return "", true
+	return "", true
 }
 
 type requiredInput struct {
-    Required string `json:"required" validate:"required"`
+	Required string `json:"required" validate:"required"`
 }
 
 func requiredTest(input any) bool {
-    _, ok := Validate(requiredInput{
-        input.(string),
-    })
+	_, ok := Validate(requiredInput{
+		input.(string),
+	})
 
-    return ok
+	return ok
 }
 
 func Test_Required_Success(t *testing.T) {
-    notEmptyValue, ok := runTestCases(
-        requiredTest,
-        []string{
-            "some data",
-            " ",  // should we consider this as valid?
-        }, true);
+	notEmptyValue, ok := runTestCases(
+		requiredTest,
+		[]string{
+			"some data",
+			" ", // should we consider this as valid?
+		}, true)
 
-    if !ok {
-        t.Error("Valid input detected as empty!")
-        t.Errorf("Input: %s\n", notEmptyValue)
-    }
+	if !ok {
+		t.Error("Valid input detected as empty!")
+		t.Errorf("Input: %s\n", notEmptyValue)
+	}
 }
 
 func Test_Required_Fail(t *testing.T) {
-    notEmptyValue, ok := runTestCases(
-        requiredTest,
-        []string{
-            "",
-        }, false);
+	notEmptyValue, ok := runTestCases(
+		requiredTest,
+		[]string{
+			"",
+		}, false)
 
-    if !ok {
-        t.Error("Invalid input detected as non-empty!")
-        t.Errorf("Input: %s\n", notEmptyValue)
-    }
+	if !ok {
+		t.Error("Invalid input detected as non-empty!")
+		t.Errorf("Input: %s\n", notEmptyValue)
+	}
 }
 
-
 type emailInput struct {
-    Email string `json:"email" validate:"email"`
+	Email string `json:"email" validate:"email"`
 }
 
 func emailTest(email any) bool {
-    _, ok := Validate(emailInput{
-        email.(string),
-    })
+	_, ok := Validate(emailInput{
+		email.(string),
+	})
 
-    return ok
+	return ok
 }
 
 func Test_Email_Success(t *testing.T) {
-    invalidEmail, ok := runTestCases(
-        emailTest,
-        []string{
-            "valid@address.com",
-            "valid@address.va.li.ds",  // email with sub domain
-        }, true);
+	invalidEmail, ok := runTestCases(
+		emailTest,
+		[]string{
+			"valid@address.com",
+			"valid@address.va.li.ds", // email with sub domain
+		}, true)
 
-    if !ok {
-        t.Error("This email should be valid!")
-        t.Errorf("Input: %s\n", invalidEmail)
-    }
+	if !ok {
+		t.Error("This email should be valid!")
+		t.Errorf("Input: %s\n", invalidEmail)
+	}
 }
 
 func Test_Email_Fail(t *testing.T) {
-    validEmail, ok := runTestCases(
-        emailTest,
-        []string{
-            "invalid_address",
-            "invalid@address",
-            "inv.al.id@address",
-            // TODO:
-            // - This should be invalid
-            // "invalid@address.inv..alid",
-        }, false)
+	validEmail, ok := runTestCases(
+		emailTest,
+		[]string{
+			"invalid_address",
+			"invalid@address",
+			"inv.al.id@address",
+			// TODO:
+			// - This should be invalid
+			// "invalid@address.inv..alid",
+		}, false)
 
-    if !ok {
-        t.Error("Invalid email address should contains some errors!")
-        t.Errorf("Input: %s\n", validEmail)
-    }
+	if !ok {
+		t.Error("Invalid email address should contains some errors!")
+		t.Errorf("Input: %s\n", validEmail)
+	}
 }
 
 // TODO:
